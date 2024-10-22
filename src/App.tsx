@@ -5,7 +5,7 @@ import EmotionDetector from './components/EmotionDetector';
 import Feedback from './components/Feedback';
 import { MessageCircle } from 'lucide-react';
 
-// Hume environment variables (ensure these have the VITE_ prefix)
+// Hume environment variables
 const apiKey = import.meta.env.VITE_HUME_API_KEY || 'fallback-api-key';
 const configId = import.meta.env.VITE_HUME_CONFIG_ID || 'fallback-config-id';
 
@@ -22,7 +22,7 @@ const App: React.FC = () => {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'Authorization': `Bearer ${apiKey}`, // Use only one authentication header
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ text }),
