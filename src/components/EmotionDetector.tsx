@@ -4,9 +4,9 @@ interface EmotionDetectorProps {
   onEmotionDetected: (emotion: string) => void;
 }
 
+// Correct usage of environment variables for Vite and Hume
 const apiKey = import.meta.env.VITE_HUME_API_KEY || 'fallback-api-key';
 const configId = import.meta.env.VITE_HUME_CONFIG_ID || 'fallback-config-id';
-
 
 const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) => {
   const [detectedEmotion, setDetectedEmotion] = useState<string>('neutral');
@@ -18,10 +18,11 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) 
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'Authorization': `Bearer ${apiKey}`, // Standard API key authorization
+            'X-Hume-Api-Key': apiKey, // Additional header (if required by Hume API)
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text }), // Payload containing the message
         }
       );
 
@@ -33,16 +34,16 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) 
       onEmotionDetected(emotion);
     } catch (error) {
       console.error('Error detecting emotion:', error);
-      setDetectedEmotion('error');
+      setDetectedEmotion('error'); // Handle errors gracefully
     }
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      analyzeEmotion('This is a test message'); // Replace with actual input
-    }, 5000);
+      analyzeEmotion('This is a test message'); // Example input for testing
+    }, 5000); // Check every 5 seconds
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
 
   return (
