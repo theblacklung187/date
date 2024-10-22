@@ -19,16 +19,7 @@ const Feedback: React.FC<FeedbackProps> = ({ chatHistory, emotion }) => {
   };
 
   const getEmotionFeedback = () => {
-    switch (emotion) {
-      case 'happy':
-        return "You seemed happy during the conversation. That's great!";
-      case 'nervous':
-        return "You appeared a bit nervous. Remember, it's okay to take your time and breathe.";
-      case 'sad':
-        return "You seemed a bit down. Is everything okay? Remember, it's just a practice session.";
-      default:
-        return "Your emotions were balanced throughout the conversation.";
-    }
+    return `During the conversation, your primary emotion was detected as: ${emotion}.`;
   };
 
   return (

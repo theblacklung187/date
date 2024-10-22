@@ -5,44 +5,53 @@ import EmotionDetector from './components/EmotionDetector';
 import Feedback from './components/Feedback';
 import { MessageCircle } from 'lucide-react';
 
+// Hume environment variables
+const apiKey = import.meta.env.VITE_HUME_API_KEY || 'fallback-api-key';
+const configId = import.meta.env.VITE_HUME_CONFIG_ID || 'fallback-config-id';
+
 const App: React.FC = () => {
   const [currentEmotion, setCurrentEmotion] = useState<string>('neutral');
   const [chatHistory, setChatHistory] = useState<Array<{ user: string; message: string }>>([]);
   const [isFeedbackMode, setIsFeedbackMode] = useState<boolean>(false);
 
-  // Handles when the user sends a message through the chat interface
-  const handleUserMessage = (message: string) => {
+  // Function to fetch emotion from the Hume API based on user input
+  const analyzeEmotionWithHume = async (text: string): Promise<string> => {
+    try {
+      const response = await fetch(
+        `https://api.hume.ai/v2/emotions?configId=${configId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
+        }
+      );
+      const data = await response.json();
+      const detectedEmotion = data?.emotions[0]?.name || 'neutral';
+      console.log(`Hume API detected emotion: ${detectedEmotion}`);
+      return detectedEmotion;
+    } catch (error) {
+      console.error('Error detecting emotion:', error);
+      return 'neutral';
+    }
+  };
+
+  // Handles when the user sends a message
+  const handleUserMessage = async (message: string) => {
     setChatHistory((prev) => [...prev, { user: 'User', message }]);
 
-    // Simulate an avatar response after a slight delay
-    setTimeout(() => {
-      const avatarMessage = generateAvatarResponse(message, currentEmotion);
-      setChatHistory((prev) => [...prev, { user: 'Avatar', message: avatarMessage }]);
-    }, 1000);
+    // Call Hume API to analyze emotion from user input
+    const detectedEmotion = await analyzeEmotionWithHume(message);
+    setCurrentEmotion(detectedEmotion);
+
+    // Avatar responds based on the detected emotion
+    const avatarMessage = `It seems I'm feeling ${detectedEmotion}. What else do you have to say?`;
+    setChatHistory((prev) => [...prev, { user: 'Avatar', message: avatarMessage }]);
   };
 
-  // Generates a dynamic avatar response based on the user's message and detected emotion
-  const generateAvatarResponse = (userMessage: string, emotion: string) => {
-    const responses = {
-      happy: "I'm feeling great! What about you?",
-      sad: "I'm here for you. Let's talk about it.",
-      excited: "That sounds amazing!",
-      nervous: "Don't worry, you're doing great.",
-      neutral: "That's interesting! Tell me more.",
-    };
-    return responses[emotion] || "Hmm, interesting. Tell me more!";
-  };
-
-  // Handles emotion detection from the EmotionDetector component
-  const handleEmotionDetected = (emotion: string) => {
-    setCurrentEmotion(emotion);
-    console.log(`Detected Emotion: ${emotion}`);
-  };
-
-  // Ends the date and switches to feedback mode
-  const endDate = () => {
-    setIsFeedbackMode(true);
-  };
+  const endDate = () => setIsFeedbackMode(true);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex flex-col items-center justify-center p-4">
@@ -51,7 +60,7 @@ const App: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/2 p-4">
             <Avatar emotion={currentEmotion} />
-            <EmotionDetector onEmotionDetected={handleEmotionDetected} />
+            <EmotionDetector onEmotionDetected={setCurrentEmotion} />
           </div>
           <div className="w-full md:w-1/2 p-4">
             {!isFeedbackMode ? (
