@@ -95,8 +95,7 @@ const VoiceInteraction: React.FC<VoiceInteractionProps> = ({ onEmotionDetected }
           'Authorization': `Bearer ${import.meta.env.VITE_HUME_API_KEY}`,
           'accept': 'application/json',
           'X-Hume-Config-Id': import.meta.env.VITE_HUME_CONFIG_ID,
-          'Access-Control-Allow-Origin': '*',
-          // Remove Content-Type header to let the browser set it with the boundary
+         
         },
         body: formData,
         mode: 'cors', // Add this line
