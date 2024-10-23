@@ -88,27 +88,35 @@ const VoiceInteraction: React.FC<VoiceInteractionProps> = ({ onEmotionDetected }
     try {
       const formData = new FormData();
       formData.append('audio', audioBlob);
-
+  
       const response = await fetch('https://api.hume.ai/v2/stream/models/empathy', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${import.meta.env.VITE_HUME_API_KEY}`,
-          'X-Hume-Config-Id': import.meta.env.VITE_HUME_CONFIG_ID
+          'accept': 'application/json',
+          'X-Hume-Config-Id': import.meta.env.VITE_HUME_CONFIG_ID,
+          'Access-Control-Allow-Origin': '*',
+          // Remove Content-Type header to let the browser set it with the boundary
         },
-        body: formData
+        body: formData,
+        mode: 'cors', // Add this line
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
       const data = await response.json();
+      console.log('Hume API response:', data); // Add this for debugging
       
       if (data.emotions?.[0]) {
         onEmotionDetected(data.emotions[0].name);
       }
     } catch (err) {
+      console.error('Error in sendAudioToHume:', err);
       setError('Error analyzing voice: ' + String(err));
     }
   };
-
   useEffect(() => {
     return () => {
       if (isRecording) {
