@@ -4,14 +4,19 @@ import { Send } from 'lucide-react';
 interface ChatInterfaceProps {
   chatHistory: Array<{ user: string; message: string }>;
   onSendMessage: (message: string) => void;
+  disabled?: boolean;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ chatHistory, onSendMessage }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
+  chatHistory, 
+  onSendMessage, 
+  disabled = false 
+}) => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (message.trim() && !disabled) {
       onSendMessage(message);
       setMessage('');
     }
@@ -44,12 +49,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ chatHistory, onSendMessag
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message..."
-          className="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+          placeholder={disabled ? "Voice mode active" : "Type your message..."}
+          className={`flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-600 ${
+            disabled ? 'bg-gray-100 cursor-not-allowed' : ''
+          }`}
+          disabled={disabled}
         />
         <button
           type="submit"
-          className="bg-purple-600 text-white p-2 rounded-r-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600"
+          disabled={disabled}
+          className={`p-2 rounded-r-lg ${
+            disabled
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-purple-600 hover:bg-purple-700'
+          } text-white focus:outline-none focus:ring-2 focus:ring-purple-600`}
         >
           <Send size={24} />
         </button>
