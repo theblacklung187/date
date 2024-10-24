@@ -15,14 +15,10 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) 
       setIsAnalyzing(true);
       setError(null);
 
-      const response = await fetch('https://api.hume.ai/v2/sentiment', {
+      const response = await fetch('/api/emotion', { // Use the backend proxy
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_HUME_API_KEY}`,
           'Content-Type': 'application/json',
-          'accept': 'application/json',
-          'X-Hume-Config-Id': import.meta.env.VITE_HUME_CONFIG_ID,
-          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           text,
@@ -37,20 +33,19 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) 
             }
           }
         }),
-        mode: 'cors' // Add CORS mode
       });
 
-      console.log('API Response Status:', response.status); // Debug log
+      console.log('API Response Status:', response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('API Error:', errorText); // Debug log
+        console.error('API Error:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('API Response Data:', data); // Debug log
-      
+      console.log('API Response Data:', data);
+
       // Parse the emotional response from Hume AI
       let dominantEmotion = 'neutral';
       
@@ -68,9 +63,8 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) 
       setDetectedEmotion(dominantEmotion);
       onEmotionDetected(dominantEmotion);
 
-    } catch (error) {
-      console.error('Error analyzing emotion:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred while analyzing emotions');
+    } catch (error: any) { // Explicitly typing error as 'any'
+      setError(error.message);
     } finally {
       setIsAnalyzing(false);
     }
