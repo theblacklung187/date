@@ -3,11 +3,7 @@
   "builds": [
     {
       "src": "src/api/humeProxy.js",
-      "use": "@vercel/node@latest"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build"
+      "use": "@vercel/node"
     }
   ],
   "routes": [
