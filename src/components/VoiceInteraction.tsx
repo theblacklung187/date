@@ -89,9 +89,10 @@ const VoiceInteraction: React.FC<VoiceInteractionProps> = ({ onEmotionDetected }
       const formData = new FormData();
       formData.append('audio', audioBlob);
 
-      const response = await fetch('/api/emotion', { // Use the backend proxy
+      const response = await fetch('https://voice-brandon-s-projects-56562070.vercel.app/api/emotion', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ audioBlob }), // Replace with actual audio data
       });
 
       if (!response.ok) {
