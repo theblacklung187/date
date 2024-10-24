@@ -5,10 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api/hume': {
-        target: 'https://api.hume.ai',
+      '/api/emotion': {
+        target: 'http://localhost:3001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/hume/, '')
       }
     }
   }
