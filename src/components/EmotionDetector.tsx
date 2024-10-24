@@ -59,10 +59,8 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({ onEmotionDetected }) 
         dominantEmotion = topEmotion.name.toLowerCase();
         console.log('Detected Emotion:', dominantEmotion); // Debug log
       }
-
-      setDetectedEmotion(dominantEmotion);
       onEmotionDetected(dominantEmotion);
-
+      onEmotionDetected(dominantEmotion);
     } catch (error: any) { // Explicitly typing error as 'any'
       setError(error.message);
     } finally {

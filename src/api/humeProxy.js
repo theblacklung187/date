@@ -10,8 +10,9 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 
 app.post('/api/emotion', async (req, res) => {
-    const apiKey = process.env.VITE_HUME_API_KEY;
-    const url = 'https://api.hume.ai/v2/sentiment';
+    const apiKey = process.env.HUME_API_KEY;
+    const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID;
+    const url = `https://api.hume.ai/v2/sentiment?config_id=${configId}`;
 
     try {
         const response = await fetch(url, {
